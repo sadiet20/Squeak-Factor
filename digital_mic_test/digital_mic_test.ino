@@ -4,24 +4,29 @@
  * Source: https://randomnerdtutorials.com/guide-for-microphone-sound-sensor-with-arduino/
 */
 
-int ledPin=13;
-int sensorPin=7;
-boolean val =0;
+int ledPin = D2;
+int micDigital = D4;
+int micAnalog = A0;
+boolean dval = 0;
+int aval = 0;
 
 void setup(){
   pinMode(ledPin, OUTPUT);
-  pinMode(sensorPin, INPUT);
-  Serial.begin (9600);
+  pinMode(micDigital, INPUT);
+  pinMode(micAnalog, INPUT);
+  Serial.begin(9600);
 }
   
 void loop (){
-  val =digitalRead(sensorPin);
-  Serial.println (val);
+  dval = digitalRead(micDigital);
+  aval = analogRead(micAnalog);
+  Serial.println(aval);
   // when the sensor detects a signal above the threshold value, LED flashes
-  if (val==HIGH) {
+  if(dval == HIGH){
     digitalWrite(ledPin, HIGH);
   }
-  else {
+  else{
     digitalWrite(ledPin, LOW);
   }
+  delay(100);
 }
