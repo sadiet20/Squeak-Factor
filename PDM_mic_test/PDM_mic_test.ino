@@ -47,6 +47,10 @@ void loop() {
     //Serial.println(samplesRead);
     // print samples to the serial monitor or plotter
     for (int i = 0; i < samplesRead; i++) {
+      Serial.print(0);    // To freeze the lower limit
+      Serial.print(" ");
+      Serial.print(5000); // To freeze the upper limit
+      Serial.print(" ");
       Serial.println(sampleBuffer[i]);
       // check if the sound value is higher than 500
       if (sampleBuffer[i]>=500){

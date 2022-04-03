@@ -20,6 +20,10 @@ void setup(){
 void loop (){
   dval = digitalRead(micDigital);
   aval = analogRead(micAnalog);
+  Serial.print(100);
+  Serial.print(" ");
+  Serial.print(0);
+  Serial.print(" ");
   Serial.println(aval);
   // when the sensor detects a signal above the threshold value, LED flashes
   if(dval == HIGH){
@@ -28,5 +32,4 @@ void loop (){
   else{
     digitalWrite(ledPin, LOW);
   }
-  delay(100);
 }
