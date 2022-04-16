@@ -2,10 +2,15 @@
 #include <arduinoFFT.h>             //for the Fourier transform
 
 #define SAMPLES 256                 //Must be a power of 2 (change at all)
-#define SAMPLING_FREQUENCY 10000    //figure how frequency of squeak
+#define SAMPLING_FREQUENCY 10000    //figure how frequency of squeak - max 6kHz
 
 short sampleBuffer[SAMPLES];
 volatile int samplesRead;
+
+int max_freq = 0;
+int corrected_max_freq = 0;
+const float correction = 1.591;
+unsigned long start_time;
 
 double vReal[SAMPLES];
 double vImag[SAMPLES];
@@ -36,6 +41,8 @@ void setup() {
   digitalWrite(redLed, HIGH);
   digitalWrite(greenLed, HIGH);
   digitalWrite(blueLed, HIGH);
+
+  start_time = millis();
 }
 
 void loop() {
@@ -45,16 +52,18 @@ void loop() {
       vImag[i] = 0;
     }
     
-    FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+    FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);    //consider using FFT_WIN_TYP_FLT_TOP
     FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
     FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
     
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
+    /*
     Serial.print(0);    // To freeze the lower limit
     Serial.print(" ");
-    Serial.print(5000); // To freeze the upper limit
+    Serial.print(2000); // To freeze the upper limit
     Serial.print(" ");
     Serial.println(peak);
+    */
     if (peak <=600)
       lightOne();
     if (peak >600 && peak < 1200)
@@ -62,6 +71,20 @@ void loop() {
     if (peak >= 1200)
       lightThree();
     samplesRead = 0;
+
+    if(peak > max_freq){
+      max_freq = peak;
+    }
+  }
+
+  //print maximum frequency every 5 seconds
+  if(millis() - start_time > 5000){
+    corrected_max_freq = max_freq*correction;
+    Serial.print("Corrected max frequency: ");
+    Serial.print(corrected_max_freq);
+    Serial.println(" Hz");
+    start_time = millis();
+    max_freq = 0;
   }
 }
 
@@ -72,17 +95,21 @@ void lightOne(){
   digitalWrite(blueLed, HIGH);
 }
 
+
 void lightTwo(){
   digitalWrite(redLed, HIGH);
   digitalWrite(greenLed, LOW);
   digitalWrite(blueLed, HIGH);
 }
 
+
 void lightThree() {
   digitalWrite(redLed, HIGH);
   digitalWrite(greenLed, HIGH);
   digitalWrite(blueLed, LOW);
 }
+
+
 void onPDMdata(){
   int bytesAvailable = PDM.available();
   PDM.read(sampleBuffer, bytesAvailable);
