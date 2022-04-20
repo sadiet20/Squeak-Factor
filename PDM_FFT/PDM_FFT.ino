@@ -15,7 +15,7 @@ unsigned long start_time;
 double vReal[SAMPLES];
 double vImag[SAMPLES];
 
-arduinoFFT FFT = arduinoFFT();
+arduinoFFT FFT = arduinoFFT(vReal, vImag, SAMPLES, SAMPLING_FREQUENCY);
 
 const int redLed = 22;    //red
 const int greenLed = 23;  //green
@@ -52,11 +52,11 @@ void loop() {
       vImag[i] = 0;
     }
     
-    FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);    //consider using FFT_WIN_TYP_FLT_TOP
-    FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
-    FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+    FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);    //srt consider using FFT_WIN_TYP_FLT_TOP
+    FFT.Compute(FFT_FORWARD);
+    FFT.ComplexToMagnitude();
     
-    double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
+    double peak = FFT.MajorPeak();
     /*
     Serial.print(0);    // To freeze the lower limit
     Serial.print(" ");
