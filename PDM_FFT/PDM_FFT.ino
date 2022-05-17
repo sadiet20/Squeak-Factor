@@ -78,11 +78,11 @@ void loop() {
   }
 
   //print maximum frequency every 5 seconds
-  if(millis() - start_time > 5000){
-    corrected_max_freq = max_freq*correction;
-    Serial.print("Corrected max frequency: ");
-    Serial.print(corrected_max_freq);
-    Serial.println(" Hz");
+  if(millis() - start_time > 100){
+    //corrected_max_freq = max_freq*correction;
+    //Serial.print("Corrected max frequency: ");
+    //Serial.print(corrected_max_freq);
+    Serial.println(max_freq);
     start_time = millis();
     max_freq = 0;
   }
